@@ -1,6 +1,8 @@
 package org.example.ecommers.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -26,12 +28,15 @@ public class CartItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
+
     private Product product;
 
     @Column(nullable = false)
+    @Min(0)
     private int quantity;
 
     @Column(nullable = false)
+    @NotNull
     private BigDecimal price;
 
     @Column(nullable = false)
@@ -41,7 +46,6 @@ public class CartItem {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
-
 
 
 }

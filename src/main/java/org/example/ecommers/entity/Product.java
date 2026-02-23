@@ -18,7 +18,7 @@ import java.util.List;
 public class Product {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -36,8 +36,8 @@ public class Product {
     @Column(nullable = false)
     private String image;
 
-    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
-    private List<CartItem> cartItems=new ArrayList<>();
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    private List<CartItem> cartItems = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
