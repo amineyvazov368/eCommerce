@@ -11,10 +11,13 @@ public record UserDto(
 
         @NotBlank(message = "First name cannot be blank")
         String firstName,
+
         @NotBlank(message = "Last name cannot be blank")
         String lastName,
+
         @NotBlank(message = "UserName cannot be blank")
         String userName,
+
         @NotBlank(message = "Email cannot be blank")
         @Email(message = "Email should be valid")
         String email,
@@ -22,6 +25,7 @@ public record UserDto(
         @NotBlank(message = "Password cannot be blank")
         @Size(min = 3, max = 50)
         String password,
+
         @NotNull(message = "Role cannot be null")
         Role role
 ) {
