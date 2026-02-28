@@ -28,18 +28,17 @@ public class CartItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
-
     private Product product;
 
     @Column(nullable = false)
-    @Min(0)
+    @Min(1)
     private int quantity;
 
     @Column(nullable = false)
     @NotNull
     private BigDecimal price;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @PrePersist

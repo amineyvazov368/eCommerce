@@ -2,6 +2,7 @@ package org.example.ecommers.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.example.ecommers.dto.CartItemDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

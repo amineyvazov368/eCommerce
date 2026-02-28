@@ -14,7 +14,7 @@ public record CartDto(
         Long userId,
 
         @NotNull
-        List<CartItem> cartItemList,
+        List<CartItemDto> cartItemList,
 
         @NotNull
         @DecimalMin(value = "0.0", message = "Total price must be greater than 0")

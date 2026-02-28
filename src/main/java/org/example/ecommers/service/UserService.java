@@ -7,7 +7,6 @@ import org.example.ecommers.entity.Cart;
 import org.example.ecommers.entity.User;
 import org.example.ecommers.exception.user.UserAlreadyExistsException;
 import org.example.ecommers.exception.user.UserNotFoundException;
-import org.example.ecommers.mapper.UserMapper;
 import org.example.ecommers.mapper.UserMapperImpl;
 import org.example.ecommers.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapperImpl userMapper;
+    private final CartService cartService;
 
     UserDto registerUser(UserDto userDto) {
 
@@ -35,6 +35,7 @@ public class UserService {
         cart.setUser(user);
         user.setCart(cart);
         User userSave = userRepository.save(user);
+        cartService.createCartForUser(userSave);
 
         return userMapper.toDto(userSave);
 
