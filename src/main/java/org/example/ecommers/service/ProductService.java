@@ -5,6 +5,8 @@ import org.example.ecommers.dto.CategoryDto;
 import org.example.ecommers.dto.ProductDto;
 import org.example.ecommers.entity.Category;
 import org.example.ecommers.entity.Product;
+import org.example.ecommers.exception.product.ProductAlreadyExistsException;
+import org.example.ecommers.exception.product.ProductNotFoundException;
 import org.example.ecommers.mapper.ProductMapperImpl;
 import org.example.ecommers.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -29,7 +31,7 @@ public class ProductService {
     public ProductDto addProduct(ProductDto productDto) {
 
         if (productRepository.existsByName(productDto.name())) {
-            throw new RuntimeException("Product name already exists");
+            throw new ProductAlreadyExistsException(productDto.name());
         }
 
         Category category = categoryService.getCategoryEntityById(productDto.CategoryId());
@@ -43,18 +45,18 @@ public class ProductService {
 
     public void deleteProduct(Long productId) {
        Product product = productRepository.findById(productId)
-               .orElseThrow(() -> new RuntimeException("Product not found"));
+               .orElseThrow(() -> new ProductNotFoundException(productId));
        productRepository.delete(product);
     }
 
     public ProductDto updateProduct(Long id, ProductDto productDto) {
 
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product does not exist"));
+                .orElseThrow(() -> new ProductNotFoundException(id));
 
         if (productRepository.existsByName(productDto.name())
         && !product.getName().equalsIgnoreCase(productDto.name())) {
-            throw new RuntimeException("Product name already exists");
+            throw new ProductAlreadyExistsException(productDto.name());
         }
         Category category = categoryService.getCategoryEntityById(productDto.CategoryId());
         product.setName(productDto.name());
@@ -69,7 +71,7 @@ public class ProductService {
     }
     public ProductDto findById(Long id) {
       Product product= productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product does not exist"));
+                .orElseThrow(() -> new ProductNotFoundException(id));
       return productMapper.toDto(product);
 
     }

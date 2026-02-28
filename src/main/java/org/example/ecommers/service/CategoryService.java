@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.ecommers.dto.CategoryDto;
 import org.example.ecommers.entity.Category;
+import org.example.ecommers.exception.category.CategoryAlreadyExistsException;
+import org.example.ecommers.exception.category.CategoryNotFoundException;
 import org.example.ecommers.mapper.CategoryMapper;
 import org.example.ecommers.mapper.CategoryMapperImpl;
 import org.example.ecommers.repository.CategoryRepository;
@@ -23,7 +25,7 @@ public class CategoryService {
 
     public CategoryDto addCategory(CategoryDto categoryDto) {
         if (categoryRepository.existsByName(categoryDto.name())) {
-            throw new RuntimeException("Category name already exists");
+            throw new CategoryAlreadyExistsException(categoryDto.name());
         }
 
         Category category = categoryMapper.toEntity(categoryDto);
@@ -40,7 +42,7 @@ public class CategoryService {
 
     public CategoryDto getCategoryById(Long id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException(id));
         return categoryMapper.toDto(category);
 
 
@@ -48,7 +50,7 @@ public class CategoryService {
 
     public Category getCategoryEntityById(Long id) {
         return categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException(id));
     }
 
     public List<CategoryDto> searchCategory(String categoryName) {
@@ -62,11 +64,11 @@ public class CategoryService {
 
     public CategoryDto updateCategory(Long id,CategoryDto categoryDto) {
         Category category=categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException(id));
         if (categoryRepository.existsByName(categoryDto.name())
                 && !category.getName()
                 .equalsIgnoreCase(categoryDto.name())) {
-            throw new RuntimeException("Category name already exists");
+            throw new CategoryAlreadyExistsException(categoryDto.name());
         }
         category.setName(categoryDto.name());
         return categoryMapper.toDto(categoryRepository.save(category));
@@ -76,7 +78,7 @@ public class CategoryService {
     public void deleteCategoryById(Long id) {
 
         Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+                .orElseThrow(() -> new CategoryNotFoundException(id));
         boolean hasProducts =
                 productRepository.existsByCategoryId(id);
 

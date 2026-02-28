@@ -5,6 +5,8 @@ import org.example.ecommers.dto.LoginDto;
 import org.example.ecommers.dto.UserDto;
 import org.example.ecommers.entity.Cart;
 import org.example.ecommers.entity.User;
+import org.example.ecommers.exception.user.UserAlreadyExistsException;
+import org.example.ecommers.exception.user.UserNotFoundException;
 import org.example.ecommers.mapper.UserMapper;
 import org.example.ecommers.mapper.UserMapperImpl;
 import org.example.ecommers.repository.UserRepository;
@@ -22,10 +24,10 @@ public class UserService {
     UserDto registerUser(UserDto userDto) {
 
         if (userRepository.existsByUserName(userDto.userName())) {
-            throw new RuntimeException("Username already exists");
+            throw new UserAlreadyExistsException(userDto.userName());
         }
         if (userRepository.existsByEmail(userDto.email())) {
-            throw new RuntimeException("Email already exists");
+            throw new UserAlreadyExistsException(userDto.email());
         }
 
         User user = userMapper.toEntity(userDto);
@@ -50,7 +52,7 @@ public class UserService {
 
     public UserDto getUserById(long id) {
         return userMapper.toDto(userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found")));
+                .orElseThrow(() -> new UserNotFoundException(id)));
     }
 
     public List<UserDto> getAllUsers() {
@@ -61,20 +63,20 @@ public class UserService {
 
     public void deleteUserById(long id) {
         userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(id));
         userRepository.deleteById(id);
     }
 
     public UserDto updateUser(long id, UserDto userDto) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException(id));
         if (!userDto.userName().equals(user.getUserName())
                 && userRepository.existsByUserName(user.getUserName())) {
-            throw new RuntimeException("Username already exists");
+            throw new UserAlreadyExistsException(user.getUserName());
         }
         if (!userDto.email().equals(user.getEmail())
                 && userRepository.existsByEmail(user.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new UserAlreadyExistsException(user.getEmail());
         }
 
         user.setFirstName(userDto.firstName());
