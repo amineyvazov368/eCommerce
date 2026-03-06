@@ -24,9 +24,10 @@ public record UserDto(
 
         @NotBlank(message = "Password cannot be blank")
         @Size(min = 3, max = 50)
-        String password,
+        String password
 
-        @NotNull(message = "Role cannot be null")
-        Role role
+//        boolean isActive,
+//
+//        Role role
 ) {
 }

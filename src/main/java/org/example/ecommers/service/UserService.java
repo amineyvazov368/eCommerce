@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.ecommers.dto.LoginDto;
 import org.example.ecommers.dto.UserDto;
 import org.example.ecommers.entity.Cart;
+import org.example.ecommers.entity.Role;
 import org.example.ecommers.entity.User;
 import org.example.ecommers.exception.user.UserAlreadyExistsException;
 import org.example.ecommers.exception.user.UserNotFoundException;
@@ -21,7 +22,7 @@ public class UserService {
     private final UserMapperImpl userMapper;
     private final CartService cartService;
 
-    UserDto registerUser(UserDto userDto) {
+   public UserDto registerUser(UserDto userDto) {
 
         if (userRepository.existsByUserName(userDto.userName())) {
             throw new UserAlreadyExistsException(userDto.userName());
@@ -30,10 +31,10 @@ public class UserService {
             throw new UserAlreadyExistsException(userDto.email());
         }
 
+
         User user = userMapper.toEntity(userDto);
-        Cart cart = new Cart();
-        cart.setUser(user);
-        user.setCart(cart);
+        user.setActive(true);
+        user.setRole(Role.USER);
         User userSave = userRepository.save(user);
         cartService.createCartForUser(userSave);
 
@@ -43,8 +44,12 @@ public class UserService {
 
     public UserDto login(LoginDto loginDto) {
 
-        User user = userRepository.findByUserName(loginDto.username())
+        User user = userRepository.findByUserName(loginDto.userName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!user.isActive()) {
+            throw new RuntimeException("Your account is deactivated.");
+        }
         if (!user.getPassword().equals(loginDto.password())) {
             throw new RuntimeException("Wrong password");
         }

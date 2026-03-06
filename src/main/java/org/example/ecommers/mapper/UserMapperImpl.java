@@ -17,7 +17,8 @@ public class UserMapperImpl implements UserMapper {
         user.setUserName(userDto.userName());
         user.setEmail(userDto.email());
         user.setPassword(userDto.password());
-        user.setRole(userDto.role());
+//        user.setActive(userDto.isActive());
+//        user.setRole(userDto.role());
         return user;
 
     }
@@ -30,8 +31,9 @@ public class UserMapperImpl implements UserMapper {
                 user.getLastName(),
                 user.getUserName(),
                 user.getEmail(),
-                user.getPassword(),
-                user.getRole()
+                ""
+//                user.isActive(),
+//                user.getRole()
 
         );
     }
