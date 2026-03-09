@@ -37,7 +37,7 @@ public class UserMapperImpl implements UserMapper {
                 user.getLastName(),
                 user.getUserName(),
                 user.getEmail(),
-                user.getPassword()
+                ""
 //                user.isActive(),
 //                user.getRole()
 
