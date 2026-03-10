@@ -2,9 +2,7 @@ package org.example.ecommers.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.ecommers.dto.AuthResponse;
-import org.example.ecommers.dto.LoginDto;
-import org.example.ecommers.dto.UserDto;
+import org.example.ecommers.dto.*;
 import org.example.ecommers.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +29,11 @@ public class AuthController {
     public ResponseEntity<AuthResponse> loginUser(@RequestBody @Valid LoginDto loginDto) {
         AuthResponse loginUser = userService.login(loginDto);
         return ResponseEntity.status(HttpStatus.OK).body(loginUser);
+    }
+
+    @PostMapping("/refresh")
+    public RefreshTokenResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        return userService.refresh(refreshTokenRequest);
     }
 
 }

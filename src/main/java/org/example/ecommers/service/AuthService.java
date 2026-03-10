@@ -1,9 +1,7 @@
 package org.example.ecommers.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.ecommers.dto.AuthResponse;
-import org.example.ecommers.dto.LoginDto;
-import org.example.ecommers.dto.UserDto;
+import org.example.ecommers.dto.*;
 import org.example.ecommers.entity.Role;
 import org.example.ecommers.entity.User;
 import org.example.ecommers.exception.user.UserAlreadyExistsException;
@@ -63,6 +61,21 @@ public class AuthService {
         UserDto userDto = userMapper.toDto(user);
         return new AuthResponse(accessToken, refreshToken, userDto);
     }
+
+    public RefreshTokenResponse refresh(RefreshTokenRequest request) {
+        String refreshToken = request.refreshToken();
+
+        if (!jwtService.isValid(refreshToken)) {
+            throw new RuntimeException("Refresh token is invalid");
+        }
+        Long userId = jwtService.extractUserId(refreshToken);
+        String userName = jwtService.extractUsername(refreshToken);
+
+        String newAccessToken = jwtService.generateAccessToken(userId, userName);
+        return new RefreshTokenResponse(newAccessToken, refreshToken);
+
+    }
+
 
     public UserDto getUserById(long id) {
         return userMapper.toDto(userRepository.findById(id)
