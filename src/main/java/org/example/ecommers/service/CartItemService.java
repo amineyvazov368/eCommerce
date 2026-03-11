@@ -31,7 +31,7 @@ public class CartItemService {
     private final ProductRepository productRepository;
     private final CartItemMapperImpl cartItemMapperImpl;
 
-    CartItemDto addProductToCart(Long userId, Long productId, int quantity) {
+    public CartItemDto addProductToCart(Long userId, Long productId, int quantity) {
         Cart cart = cartRepository.findById(productId)
                 .orElseThrow(() -> new CartNotFoundException(userId));
         Product product = productRepository.findById(productId)
