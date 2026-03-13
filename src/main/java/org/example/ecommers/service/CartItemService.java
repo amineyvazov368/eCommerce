@@ -28,11 +28,12 @@ public class CartItemService {
 
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
+    private final CartService cartService;
     private final ProductRepository productRepository;
     private final CartItemMapperImpl cartItemMapperImpl;
 
     public CartItemDto addProductToCart(Long userId, Long productId, int quantity) {
-        Cart cart = cartRepository.findById(productId)
+        Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new CartNotFoundException(userId));
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
@@ -50,16 +51,19 @@ public class CartItemService {
             cartItem.setCart(cart);
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
+            cartItem.setPrice(product.getPrice());
         }
 
         cartItemRepository.save(cartItem);
+        cartService.calculateCartTotal(cart);
+        cartRepository.save(cart);
 
         return cartItemMapperImpl.cartItemToDto(cartItem);
 
     }
 
     public List<CartItemDto> findAllByCart(Cart cart) {
-        Optional<CartItem> find = cartItemRepository.findAllByCart(cart);
+        List<CartItem> find = cartItemRepository.findAllByCart(cart);
 
         return find.stream().map(CartItemMapperImpl::cartItemToDto)
                 .toList();
@@ -72,6 +76,10 @@ public class CartItemService {
 
         cartItem.setQuantity(cartItem.getQuantity() + 1);
         cartItemRepository.save(cartItem);
+        Cart cart = cartItem.getCart();
+        cartService.calculateCartTotal(cart);
+        cartRepository.save(cart);
+
         return cartItemMapperImpl.cartItemToDto(cartItem);
     }
 
@@ -82,6 +90,9 @@ public class CartItemService {
         if (cartItem.getQuantity() > 1) {
             cartItem.setQuantity(cartItem.getQuantity() - 1);
             cartItemRepository.save(cartItem);
+            Cart cart = cartItem.getCart();
+            cartService.calculateCartTotal(cart);
+            cartRepository.save(cart);
         } else {
             cartItemRepository.delete(cartItem);
         }
@@ -94,6 +105,14 @@ public class CartItemService {
                 .orElseThrow(() -> new RuntimeException("CartItem not found"));
 
         cartItemRepository.delete(cartItem);
+        Cart cart = cartItem.getCart();
+        cartService.calculateCartTotal(cart);
+        cartRepository.save(cart);
+
+    }
+
+    public void removeAllCartItems(Long cartId) {
+        cartService.cleanCart(cartId);
     }
 
 

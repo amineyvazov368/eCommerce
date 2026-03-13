@@ -1,9 +1,10 @@
 package org.example.ecommers.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,11 +13,8 @@ import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 
-import static java.security.KeyRep.Type.SECRET;
-
 @Slf4j
 @Service
-
 public class JwtService {
 
     private final SecretKey key;

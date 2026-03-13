@@ -18,7 +18,7 @@ public class CartMapperImpl implements CartMapper {
     private final CartItemMapperImpl cartItemMapper;
 
     @Override
-    public   CartDto toDto(Cart cart) {
+    public  CartDto toDto(Cart cart) {
         return new CartDto(
                 cart.getId(),
                 cart.getUser().getId(),

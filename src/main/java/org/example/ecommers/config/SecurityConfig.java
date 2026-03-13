@@ -30,6 +30,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/users/**").permitAll()
+                        .requestMatchers("/api/products/**").permitAll()
+                        .requestMatchers("/api/carts/**").permitAll()
+                        .requestMatchers("/api/cart-items/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session ->
@@ -39,5 +43,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    // eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxMiIsInVzZXJuYW1lIjoicmFtaW4xMjMiLCJpYXQiOjE3NzMyNTIxMjcsImV4cCI6MTc3MzI1MzAyN30.AinYNO699tzSXW7TNfQGoO2kru07LQnBe3hOLi9PUXA5xTi4vMu-YDhc3s75xwgL
 }
 
