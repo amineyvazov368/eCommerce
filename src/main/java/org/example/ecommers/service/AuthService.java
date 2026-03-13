@@ -83,15 +83,16 @@ public class AuthService {
     }
 
     public List<UserDto> getAllUsers() {
-        return userRepository.findAll()
+        return userRepository.findAllByActiveTrue()
                 .stream().map(userMapper::toDto)
                 .toList();
     }
 
     public void deleteUserById(long id) {
-        userRepository.findById(id)
+        User user =userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        userRepository.deleteById(id);
+        user.setActive(false);
+        userRepository.save(user);
     }
 
     public UserDto updateUser(long id, UserDto userDto) {
