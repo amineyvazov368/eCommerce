@@ -1,8 +1,8 @@
-package org.example.ecommers.dto;
+package org.example.ecommers.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 
-public record LoginDto(
+public record LoginRequest(
         @NotBlank(message = "Username cannot be blank")
         String userName,
 

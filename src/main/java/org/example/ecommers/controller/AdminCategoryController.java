@@ -3,8 +3,7 @@ package org.example.ecommers.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.ecommers.dto.CategoryDto;
-import org.example.ecommers.entity.Category;
+import org.example.ecommers.dto.response.CategoryDto;
 import org.example.ecommers.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +26,8 @@ public class AdminCategoryController {
 
     @GetMapping
     public ResponseEntity<List<CategoryDto>> getCategories() {
-      List<CategoryDto> categoryDto=  categoryService.getAllCategories();
-      return ResponseEntity.ok().body(categoryDto);
+        List<CategoryDto> categoryDto = categoryService.getAllCategories();
+        return ResponseEntity.ok().body(categoryDto);
     }
 
     @GetMapping("/search")
@@ -53,9 +52,6 @@ public class AdminCategoryController {
         categoryService.deleteCategoryById(id);
         return ResponseEntity.noContent().build();
     }
-
-
-
 
 
 }

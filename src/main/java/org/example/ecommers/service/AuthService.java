@@ -1,7 +1,12 @@
 package org.example.ecommers.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.ecommers.dto.*;
+import org.example.ecommers.dto.request.LoginRequest;
+import org.example.ecommers.dto.request.RefreshTokenRequest;
+import org.example.ecommers.dto.request.UserRequest;
+import org.example.ecommers.dto.response.AuthResponse;
+import org.example.ecommers.dto.response.RefreshTokenResponse;
+import org.example.ecommers.dto.response.UserResponse;
 import org.example.ecommers.entity.Role;
 import org.example.ecommers.entity.User;
 import org.example.ecommers.exception.user.UserAlreadyExistsException;
@@ -24,17 +29,17 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserDto registerUser(UserDto userDto) {
+    public UserResponse registerUser(UserRequest userRequest) {
 
-        if (userRepository.existsByUserName(userDto.userName())) {
-            throw new UserAlreadyExistsException(userDto.userName());
+        if (userRepository.existsByUserName(userRequest.userName())) {
+            throw new UserAlreadyExistsException(userRequest.userName());
         }
-        if (userRepository.existsByEmail(userDto.email())) {
-            throw new UserAlreadyExistsException(userDto.email());
+        if (userRepository.existsByEmail(userRequest.email())) {
+            throw new UserAlreadyExistsException(userRequest.email());
         }
 
 
-        User user = userMapper.toEntity(userDto);
+        User user = userMapper.toEntity(userRequest);
         user.setActive(true);
         user.setRole(Role.USER);
         User userSave = userRepository.save(user);
@@ -44,7 +49,7 @@ public class AuthService {
 
     }
 
-    public AuthResponse login(LoginDto loginDto) {
+    public AuthResponse login(LoginRequest loginDto) {
 
         User user = userRepository.findByUserName(loginDto.userName())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -58,7 +63,7 @@ public class AuthService {
         String accessToken = jwtService.generateAccessToken(user.getId(), user.getUserName());
         String refreshToken = jwtService.generateRefreshToken(user.getId(), user.getUserName());
 
-        UserDto userDto = userMapper.toDto(user);
+        UserResponse userDto = userMapper.toDto(user);
         return new AuthResponse(accessToken, refreshToken, userDto);
     }
 
@@ -77,12 +82,12 @@ public class AuthService {
     }
 
 
-    public UserDto getUserById(long id) {
+    public UserResponse getUserById(long id) {
         return userMapper.toDto(userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id)));
     }
 
-    public List<UserDto> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userRepository.findAllByActiveTrue()
                 .stream().map(userMapper::toDto)
                 .toList();
@@ -95,7 +100,7 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public UserDto updateUser(long id, UserDto userDto) {
+    public UserResponse updateUser(long id, UserRequest userDto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         if (!userDto.userName().equals(user.getUserName())

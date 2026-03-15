@@ -2,21 +2,17 @@ package org.example.ecommers.service;
 
 
 import lombok.RequiredArgsConstructor;
-import org.example.ecommers.dto.CartItemDto;
+import org.example.ecommers.dto.response.CartItemResponse;
 import org.example.ecommers.entity.Cart;
 import org.example.ecommers.entity.CartItem;
 import org.example.ecommers.entity.Product;
-import org.example.ecommers.entity.User;
 import org.example.ecommers.exception.cart.CartItemNotFoundException;
 import org.example.ecommers.exception.cart.CartNotFoundException;
 import org.example.ecommers.exception.product.ProductNotFoundException;
-import org.example.ecommers.exception.user.UserNotFoundException;
 import org.example.ecommers.mapper.CartItemMapperImpl;
-import org.example.ecommers.mapper.CartMapperImpl;
 import org.example.ecommers.repository.CartItemRepository;
 import org.example.ecommers.repository.CartRepository;
 import org.example.ecommers.repository.ProductRepository;
-import org.example.ecommers.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,7 +28,7 @@ public class CartItemService {
     private final ProductRepository productRepository;
     private final CartItemMapperImpl cartItemMapperImpl;
 
-    public CartItemDto addProductToCart(Long userId, Long productId, int quantity) {
+    public CartItemResponse addProductToCart(Long userId, Long productId, int quantity) {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new CartNotFoundException(userId));
         Product product = productRepository.findById(productId)
@@ -62,7 +58,14 @@ public class CartItemService {
 
     }
 
-    public List<CartItemDto> findAllByCart(Cart cart) {
+    public List<CartItemResponse> findAllByCartId(Long cartId){
+        return cartItemRepository.findByCartId(cartId)
+                .stream()
+                .map(CartItemMapperImpl::cartItemToDto)
+                .toList();
+    }
+
+    public List<CartItemResponse> findAllByCart(Cart cart) {
         List<CartItem> find = cartItemRepository.findAllByCart(cart);
 
         return find.stream().map(CartItemMapperImpl::cartItemToDto)
@@ -70,7 +73,7 @@ public class CartItemService {
 
     }
 
-    public CartItemDto increaseQuantity(Long cartItemId) {
+    public CartItemResponse increaseQuantity(Long cartItemId) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new CartItemNotFoundException(cartItemId.toString()));
 
@@ -83,7 +86,7 @@ public class CartItemService {
         return cartItemMapperImpl.cartItemToDto(cartItem);
     }
 
-    public CartItemDto decreaseQuantity(Long cartItemId) {
+    public CartItemResponse decreaseQuantity(Long cartItemId) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new CartItemNotFoundException(cartItemId.toString()));
 

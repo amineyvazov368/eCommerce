@@ -1,6 +1,5 @@
 package org.example.ecommers.repository;
 
-import org.example.ecommers.dto.CartDto;
 import org.example.ecommers.entity.Cart;
 import org.example.ecommers.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,11 +1,12 @@
 package org.example.ecommers.mapper;
 
-import org.example.ecommers.dto.UserDto;
+import org.example.ecommers.dto.request.UserRequest;
+import org.example.ecommers.dto.response.UserResponse;
 import org.example.ecommers.entity.User;
 
 public interface UserMapper {
 
-    User toEntity(UserDto userDto);
+    User toEntity(UserRequest userRequest);
 
-    UserDto toDto(User user);
+    UserResponse toDto(User user);
 }

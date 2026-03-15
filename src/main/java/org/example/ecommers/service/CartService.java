@@ -1,15 +1,11 @@
 package org.example.ecommers.service;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
-import org.example.ecommers.dto.CartDto;
+import org.example.ecommers.dto.response.CartResponse;
 import org.example.ecommers.entity.Cart;
-import org.example.ecommers.entity.CartItem;
 import org.example.ecommers.entity.User;
 import org.example.ecommers.exception.cart.CartAlreadyExistsException;
 import org.example.ecommers.exception.cart.CartNotFoundException;
-import org.example.ecommers.mapper.CartItemMapperImpl;
-import org.example.ecommers.mapper.CartMapper;
 import org.example.ecommers.mapper.CartMapperImpl;
 import org.example.ecommers.repository.CartRepository;
 import org.springframework.stereotype.Service;
@@ -25,7 +21,7 @@ public class CartService {
     private final CartRepository cartRepository;
     private final CartMapperImpl cartMapperImpl;
 
-    public CartDto createCartForUser(User user) {
+    public CartResponse createCartForUser(User user) {
 
         if (cartRepository.existsById(user.getId())) {
             throw new CartAlreadyExistsException(user.getId());
@@ -38,7 +34,7 @@ public class CartService {
         return cartMapperImpl.toDto(cart1);
     }
 
-    public CartDto getUserCart(Long userId) {
+    public CartResponse getUserCart(Long userId) {
         Cart cart = cartRepository.findByUserId(userId)
                 .orElseThrow(() -> new CartNotFoundException(userId));
         return cartMapperImpl.toDto(cart);
@@ -52,8 +48,8 @@ public class CartService {
         cartRepository.save(cart);
     }
 
-    public List<CartDto> getAllCart(){
-        List<CartDto> carts = cartRepository.findAll()
+    public List<CartResponse> getAllCart(){
+        List<CartResponse> carts = cartRepository.findAll()
                 .stream().map(cartMapperImpl::toDto).toList();
         return carts;
 

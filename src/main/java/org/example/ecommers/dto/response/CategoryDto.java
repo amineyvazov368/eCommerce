@@ -1,4 +1,4 @@
-package org.example.ecommers.dto;
+package org.example.ecommers.dto.response;
 
 import jakarta.validation.constraints.NotBlank;
 

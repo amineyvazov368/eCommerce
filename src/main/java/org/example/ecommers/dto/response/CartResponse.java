@@ -1,23 +1,27 @@
-package org.example.ecommers.dto;
+package org.example.ecommers.dto.response;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
-import org.example.ecommers.entity.CartItem;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
-public record CartDto(
-        Long id,
-
-        @NotNull(message = "User ID cannot be null")
-        Long userId,
+public record CartResponse(
 
         @NotNull
-        List<CartItemDto> cartItemList,
+        Long id,
+
+        @NotNull
+        Long userId,
+
+        List<CartItemResponse> cartItems,
 
         @NotNull
         @DecimalMin(value = "0.0", message = "Total price must be greater than 0")
-        BigDecimal totalPrice
+        BigDecimal totalPrice,
+
+        @NotNull
+        LocalDateTime createdAt
 ) {
 }

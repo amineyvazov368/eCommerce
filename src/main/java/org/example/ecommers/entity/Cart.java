@@ -2,20 +2,19 @@ package org.example.ecommers.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.ecommers.dto.CartItemDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "carts")
-@AllArgsConstructor
-@NoArgsConstructor
 @Setter
 @Getter
+@Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "carts")
 public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

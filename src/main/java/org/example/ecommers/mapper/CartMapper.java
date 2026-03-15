@@ -1,17 +1,14 @@
 package org.example.ecommers.mapper;
 
-import org.example.ecommers.dto.CartDto;
-import org.example.ecommers.dto.CartItemDto;
+import org.example.ecommers.dto.request.CartRequest;
+import org.example.ecommers.dto.response.CartResponse;
 import org.example.ecommers.entity.Cart;
-import org.example.ecommers.entity.CartItem;
 
 public interface CartMapper {
 
-    CartDto toDto(Cart cart);
+    CartResponse toDto(Cart cart);
 
-    Cart toEntity(CartDto cartDto);
-
-
+    Cart toEntity(CartRequest cartDto);
 
 
 }

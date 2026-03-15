@@ -2,7 +2,12 @@ package org.example.ecommers.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.ecommers.dto.*;
+import org.example.ecommers.dto.request.LoginRequest;
+import org.example.ecommers.dto.request.RefreshTokenRequest;
+import org.example.ecommers.dto.request.UserRequest;
+import org.example.ecommers.dto.response.AuthResponse;
+import org.example.ecommers.dto.response.RefreshTokenResponse;
+import org.example.ecommers.dto.response.UserResponse;
 import org.example.ecommers.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +25,13 @@ public class AuthController {
     private final AuthService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserDto> registerUser(@RequestBody @Valid UserDto userDto) {
-        UserDto savedUser = userService.registerUser(userDto);
+    public ResponseEntity<UserResponse> registerUser(@RequestBody @Valid UserRequest userDto) {
+        UserResponse savedUser = userService.registerUser(userDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> loginUser(@RequestBody @Valid LoginDto loginDto) {
+    public ResponseEntity<AuthResponse> loginUser(@RequestBody @Valid LoginRequest loginDto) {
         AuthResponse loginUser = userService.login(loginDto);
         return ResponseEntity.status(HttpStatus.OK).body(loginUser);
     }

@@ -1,4 +1,4 @@
-package org.example.ecommers.dto;
+package org.example.ecommers.dto.response;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-public record ProductDto(
+public record ProductResponse(
+        @NotNull(message = "Product ID cannot be null")
         Long id,
 
         @NotBlank(message = "Product name cannot be blank")
@@ -27,6 +29,12 @@ public record ProductDto(
         String image,
 
         @NotNull(message = "Category ID cannot be null")
-        Long CategoryId
+        Long categoryId,
+
+        @NotBlank(message = "Category name cannot be blank")
+        String categoryName,
+
+        @NotNull(message = "CreatedAt cannot be null")
+        LocalDateTime createdAt
 ) {
 }

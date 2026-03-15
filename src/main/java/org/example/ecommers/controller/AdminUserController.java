@@ -3,7 +3,8 @@ package org.example.ecommers.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.ecommers.dto.UserDto;
+import org.example.ecommers.dto.request.UserRequest;
+import org.example.ecommers.dto.response.UserResponse;
 import org.example.ecommers.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,14 @@ public class AdminUserController {
     private final AuthService authService;
 
     @GetMapping
-    public ResponseEntity<List<UserDto>> getUsers() {
-       List<UserDto> userDto = authService.getAllUsers();
+    public ResponseEntity<List<UserResponse>> getUsers() {
+       List<UserResponse> userDto = authService.getAllUsers();
        return ResponseEntity.ok(userDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUser(@PathVariable Long id) {
-        UserDto userDto = authService.getUserById(id);
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
+        UserResponse userDto = authService.getUserById(id);
         return ResponseEntity.ok(userDto);
     }
 
@@ -36,9 +37,9 @@ public class AdminUserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable Long id,
-                                              @Valid @RequestBody UserDto userDto) {
-        UserDto user = authService.updateUser(id, userDto);
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,
+                                                  @Valid @RequestBody UserRequest userDto) {
+        UserResponse user = authService.updateUser(id, userDto);
         return ResponseEntity.ok(user);
     }
 }

@@ -1,19 +1,16 @@
 package org.example.ecommers.service;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.example.ecommers.dto.CategoryDto;
+import org.example.ecommers.dto.response.CategoryDto;
 import org.example.ecommers.entity.Category;
 import org.example.ecommers.exception.category.CategoryAlreadyExistsException;
 import org.example.ecommers.exception.category.CategoryNotFoundException;
-import org.example.ecommers.mapper.CategoryMapper;
 import org.example.ecommers.mapper.CategoryMapperImpl;
 import org.example.ecommers.repository.CategoryRepository;
 import org.example.ecommers.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor

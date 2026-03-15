@@ -1,8 +1,8 @@
-package org.example.ecommers.dto;
+package org.example.ecommers.dto.response;
 
 public record AuthResponse(
         String accessToken,
         String refreshToken,
-        UserDto userDto
+        UserResponse userDto
 ) {
 }

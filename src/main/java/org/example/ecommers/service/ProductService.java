@@ -1,8 +1,8 @@
 package org.example.ecommers.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.ecommers.dto.CategoryDto;
-import org.example.ecommers.dto.ProductDto;
+import org.example.ecommers.dto.request.ProductRequest;
+import org.example.ecommers.dto.response.ProductResponse;
 import org.example.ecommers.entity.Category;
 import org.example.ecommers.entity.Product;
 import org.example.ecommers.exception.product.ProductAlreadyExistsException;
@@ -12,7 +12,6 @@ import org.example.ecommers.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +21,13 @@ public class ProductService {
     private final CategoryService categoryService;
     private final ProductMapperImpl productMapper;
 
-    public List<ProductDto> findAll() {
+    public List<ProductResponse> findAll() {
         return productRepository.findAll()
                 .stream().map(productMapper::toDto)
                 .toList();
     }
 
-    public ProductDto addProduct(ProductDto productDto) {
+    public ProductResponse addProduct(ProductRequest productDto) {
 
         if (productRepository.existsByName(productDto.name())) {
             throw new ProductAlreadyExistsException(productDto.name());
@@ -44,18 +43,18 @@ public class ProductService {
     }
 
     public void deleteProduct(Long productId) {
-       Product product = productRepository.findById(productId)
-               .orElseThrow(() -> new ProductNotFoundException(productId));
-       productRepository.delete(product);
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+        productRepository.delete(product);
     }
 
-    public ProductDto updateProduct(Long id, ProductDto productDto) {
+    public ProductResponse updateProduct(Long id, ProductRequest productDto) {
 
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
         if (productRepository.existsByName(productDto.name())
-        && !product.getName().equalsIgnoreCase(productDto.name())) {
+                && !product.getName().equalsIgnoreCase(productDto.name())) {
             throw new ProductAlreadyExistsException(productDto.name());
         }
         Category category = categoryService.getCategoryEntityById(productDto.CategoryId());
@@ -69,27 +68,27 @@ public class ProductService {
         return productMapper.toDto(save);
 
     }
-    public ProductDto findById(Long id) {
-      Product product= productRepository.findById(id)
+
+    public ProductResponse findById(Long id) {
+        Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException(id));
-      return productMapper.toDto(product);
+        return productMapper.toDto(product);
 
     }
 
-    public List<ProductDto> searchByName(String name) {
-        List<ProductDto> products = productRepository.findByNameContainingIgnoreCase(name)
+    public List<ProductResponse> searchByName(String name) {
+        List<ProductResponse> products = productRepository.findByNameContainingIgnoreCase(name)
                 .stream().map(productMapper::toDto).toList();
         return products;
 
     }
 
-    public List<ProductDto> searchByCategory(String categoryName) {
-        List<ProductDto> products=productRepository.findByCategoryNameContainingIgnoreCase(categoryName)
+    public List<ProductResponse> searchByCategory(String categoryName) {
+        List<ProductResponse> products = productRepository.findByCategoryNameContainingIgnoreCase(categoryName)
                 .stream().map(productMapper::toDto).toList();
 
         return products;
 
     }
-
 
 }

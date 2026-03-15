@@ -1,12 +1,10 @@
-package org.example.ecommers.dto;
+package org.example.ecommers.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.example.ecommers.entity.Role;
 
-public record UserDto(
+public record UserRequest(
         Long id,
 
         @NotBlank(message = "First name cannot be blank")
