@@ -147,7 +147,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 document.getElementById('loginForm').onsubmit = async (e) => {
     e.preventDefault();
 
-    // Email əvəzinə userName göndəririk
     const payload = {
         userName: document.getElementById('loginUsername').value,
         password: document.getElementById('loginPass').value
@@ -162,12 +161,20 @@ document.getElementById('loginForm').onsubmit = async (e) => {
 
         if (res.ok) {
             const data = await res.json();
-            // Əgər backend token qaytarırsa saxlayırıq
-            if(data.token) localStorage.setItem('token', data.token);
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('currentUser', JSON.stringify(data));
 
             alert("Giriş uğurludur!");
             hideModal('authModal');
-            location.reload();
+
+            // Admin userdirsə, admin panelə yönləndir
+            if(data.role === "ADMIN") {
+                window.location.href = "admin.html"; // Admin panel HTML
+            } else {
+                // Navbar-da username göstər
+                updateNavbarUser(data.userName);
+                location.reload(); // Və ya lazım deyilsə reload
+            }
         } else {
             const errorData = await res.json();
             alert("İstifadəçi adı və ya şifrə səhvdir!");
@@ -178,6 +185,26 @@ document.getElementById('loginForm').onsubmit = async (e) => {
     }
 };
 
+// Navbar-da username göstərmək
+function updateNavbarUser(username) {
+    const navLinks = document.querySelector('.nav-links');
+    navLinks.innerHTML = `<span class="user-display">Salam, ${username}</span>
+                          <button onclick="logout()" class="link-btn">Çıxış</button>`;
+}
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('currentUser');
+    location.reload();
+}
+
+// Page yüklənəndə user varsa navbar-da göstər
+document.addEventListener('DOMContentLoaded', () => {
+    const storedUser = JSON.parse(localStorage.getItem('currentUser'));
+    if(storedUser && storedUser.role !== "ADMIN") {
+        updateNavbarUser(storedUser.userName);
+    }
+});
 // 2. Qeydiyyat Funksiyası
 document.getElementById('registerForm').onsubmit = async (e) => {
     e.preventDefault();

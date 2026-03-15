@@ -11,10 +11,7 @@ import org.example.ecommers.dto.response.UserResponse;
 import org.example.ecommers.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -39,6 +36,12 @@ public class AuthController {
     @PostMapping("/refresh")
     public RefreshTokenResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         return userService.refresh(refreshTokenRequest);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader) {
+        userService.logout(authHeader);
+        return ResponseEntity.ok("Uğurla çıxış edildi.");
     }
 
 }

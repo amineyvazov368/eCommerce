@@ -67,6 +67,19 @@ public class AuthService {
         return new AuthResponse(accessToken, refreshToken, userDto);
     }
 
+    private final java.util.Set<String> tokenBlacklist = java.util.Collections.synchronizedSet(new java.util.HashSet<>());
+
+    public void logout(String authHeader) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            tokenBlacklist.add(token);
+        }
+    }
+
+    public boolean isTokenBlacklisted(String token) {
+        return tokenBlacklist.contains(token);
+    }
+
     public RefreshTokenResponse refresh(RefreshTokenRequest request) {
         String refreshToken = request.refreshToken();
 
