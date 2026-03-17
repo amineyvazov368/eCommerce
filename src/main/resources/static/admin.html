@@ -1,0 +1,96 @@
+<!-- admin-panel.html -->
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Products</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<nav class="admin-navbar">
+    <div class="nav-left">
+        <ul>
+            <li><a href="#" id="navProducts">Products</a></li>
+            <li><a href="#" id="navCategories">Categories</a></li>
+        </ul>
+    </div>
+
+    <div class="nav-right">
+        <button id="homeBtn">🏠 Home</button>
+    </div>
+</nav>
+
+<div class="admin-content" id="productsSection">
+    <h2>Products</h2>
+    <button id="addProductBtn">Add Product</button>
+    <table id="productsTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Stock</th>
+            <th>Price</th>
+            <th>Image</th>
+
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<!-- Categories Section (Initially hidden) -->
+<div id="categoriesSection" style="display:none;">
+    <h2>Categories</h2>
+    <button id="addCategoryBtn">Add Category</button>
+    <table id="categoriesTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+</div>
+
+
+<!-- Modal Form -->
+<div class="modal" id="productModal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="modalTitle">Add Product</h3>
+        <form id="productForm">
+            <input type="hidden" id="productId">
+            <input type="text" id="productName" placeholder="Product Name" required>
+            <textarea id="productDescription" placeholder="Description" required></textarea>
+            <input type="number" id="productStock" placeholder="Stock" required>
+            <input type="number" id="productPrice" placeholder="Price" required step="0.01">
+            <input type="text" id="productImage" placeholder="Image URL" required>
+            <input type="number" id="productCategoryId" placeholder="Category ID" required>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<!-- Category Modal -->
+<div class="modal" id="categoryModal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="categoryModalTitle">Add Category</h3>
+        <form id="categoryForm">
+            <input type="hidden" id="categoryId">
+            <input type="text" id="categoryName" placeholder="Category Name" required>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<script src="admin.js"></script>
+</body>
+</html>

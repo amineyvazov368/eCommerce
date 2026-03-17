@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeyn Shop</title>
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="logo">ShopEase</div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Axtar...">
+        <button id="searchBtn">Search</button>
+    </div>
+
+    <div class="nav-actions">
+        <!-- Cart -->
+        <!-- Navbar Cart -->
+        <div class="cart" id="cartIcon">
+            🛒
+            <span id="cartCount">0</span>
+            <span id="cartTotalPrice">0₼</span>
+
+            <!-- Cart Dropdown -->
+            <div class="cart-dropdown" id="cartDropdown" style="display:none;">
+                <div id="cartItemsContainer"></div>
+                <div id="cartDropdownTotal" style="margin-top:10px; font-weight:bold;"></div>
+            </div>
+        </div>
+
+        <!-- Login/Register (görünəcək login olmamış user üçün) -->
+        <div class="user-actions" id="userActions">
+            <button id="loginBtn">Login</button>
+            <button id="registerBtn">Register</button>
+        </div>
+
+        <!-- User adı + Logout (görünəcək login olduqda) -->
+        <div class="user-name" id="userNameDisplay" style="display:none;">
+            <span id="userNameText"></span>
+            <button id="logoutBtn">Logout</button>
+        </div>
+    </div>
+</nav>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+    <div class="modal-content">
+        <span class="close" id="loginClose">&times;</span>
+        <h2>Login</h2>
+        <input type="text" id="loginUserName" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button id="loginSubmit">Login</button>
+        <p>Hesabınız yoxdur? <span id="toRegister">Register</span></p>
+    </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal" id="registerModal">
+    <div class="modal-content">
+        <span class="close" id="registerClose">&times;</span>
+        <h2>Register</h2>
+        <input type="text" id="regFirstName" placeholder="First Name">
+        <input type="text" id="regLastName" placeholder="Last Name">
+        <input type="text" id="regUserName" placeholder="Username">
+        <input type="email" id="regEmail" placeholder="Email">
+        <input type="password" id="regPassword" placeholder="Password">
+        <button id="registerSubmit">Register</button>
+    </div>
+</div>
+
+<!-- CATEGORY FILTER -->
+<div class="categories" id="categoriesContainer"></div>
+
+<!-- PRODUCTS GRID -->
+<div class="products" id="productsContainer"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

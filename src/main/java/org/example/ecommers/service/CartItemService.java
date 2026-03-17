@@ -1,6 +1,7 @@
 package org.example.ecommers.service;
 
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.ecommers.dto.response.CartItemResponse;
 import org.example.ecommers.entity.Cart;
@@ -102,16 +103,33 @@ public class CartItemService {
         return cartItemMapperImpl.cartItemToDto(cartItem);
     }
 
+//    public void removeCartItem(Long cartItemId) {
+//
+//        CartItem cartItem = cartItemRepository.findById(cartItemId)
+//                .orElseThrow(() -> new RuntimeException("CartItem not found"));
+//
+//        cartItemRepository.delete(cartItem);
+//        Cart cart = cartItem.getCart();
+//        cartService.calculateCartTotal(cart);
+//        cartRepository.save(cart);
+//
+//    }
+//
+//    @Transactional
     public void removeCartItem(Long cartItemId) {
-
+        // CartItem varsa tap, yoxdursa 404 qaytar
         CartItem cartItem = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new RuntimeException("CartItem not found"));
+                .orElseThrow(() -> new RuntimeException("CartItem not found with id " + cartItemId));
 
-        cartItemRepository.delete(cartItem);
-        Cart cart = cartItem.getCart();
-        cartService.calculateCartTotal(cart);
-        cartRepository.save(cart);
+        Cart cart = cartItem.getCart(); // əvvəl alın
 
+        cartItemRepository.delete(cartItem); // delete əməliyyatı
+
+        // Cart total-u yenilə
+        if (cart != null) {
+            cartService.calculateCartTotal(cart);
+             cartRepository.save(cart); // @Transactional varsa lazım deyil
+        }
     }
 
     public void removeAllCartItems(Long cartId) {
