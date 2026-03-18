@@ -11,6 +11,7 @@ import org.example.ecommers.entity.Role;
 import org.example.ecommers.entity.User;
 import org.example.ecommers.exception.user.UserAlreadyExistsException;
 import org.example.ecommers.exception.user.UserNotFoundException;
+import org.example.ecommers.mapper.UserMapper;
 import org.example.ecommers.mapper.UserMapperImpl;
 import org.example.ecommers.repository.UserRepository;
 import org.example.ecommers.security.JwtService;
@@ -41,7 +42,7 @@ public class AuthService {
 
         User user = userMapper.toEntity(userRequest);
         user.setActive(true);
-        user.setRole(Role.USER);
+        user.setRole(Role.ROLE_USER);
         User userSave = userRepository.save(user);
         cartService.createCartForUser(userSave);
 
@@ -101,7 +102,7 @@ public class AuthService {
     }
 
     public List<UserResponse> getAllUsers() {
-        return userRepository.findAllByActiveTrue()
+        return userRepository.findAllByIsActiveTrue()
                 .stream().map(userMapper::toDto)
                 .toList();
     }
@@ -134,6 +135,16 @@ public class AuthService {
         }
         return userMapper.toDto(userRepository.save(user));
 
+    }
+
+    public UserResponse updateUserRole(Long userId, Role newRole) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        user.setRole(newRole);
+        userRepository.save(user);
+
+        return userMapper.toDto(user);
     }
 
 

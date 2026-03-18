@@ -25,7 +25,7 @@ public class UserMapperImpl implements UserMapper {
         user.setEmail(userRequest.email());
         user.setPassword(passwordEncoder.encode(userRequest.password()));
         user.setActive(true);
-        user.setRole(Role.USER);
+        user.setRole(Role.ROLE_USER);
         return user;
 
     }

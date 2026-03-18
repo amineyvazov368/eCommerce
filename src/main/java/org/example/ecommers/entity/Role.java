@@ -1,5 +1,6 @@
 package org.example.ecommers.entity;
 
 public enum Role {
-    USER, ADMIN
+    ROLE_ADMIN,
+    ROLE_USER
 }

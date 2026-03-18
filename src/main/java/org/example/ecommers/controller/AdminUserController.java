@@ -4,15 +4,20 @@ package org.example.ecommers.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.ecommers.dto.request.UserRequest;
+import org.example.ecommers.dto.request.UserRoleRequest;
 import org.example.ecommers.dto.response.UserResponse;
 import org.example.ecommers.service.AuthService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
-
+@CrossOrigin(origins = "http://localhost:63342", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/admin/users")
+//@PreAuthorize("hasRole('ROLE_ADMIN')")
 @RequiredArgsConstructor
 public class AdminUserController {
 
@@ -21,6 +26,7 @@ public class AdminUserController {
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUsers() {
        List<UserResponse> userDto = authService.getAllUsers();
+        if (userDto == null) userDto = new ArrayList<>();
        return ResponseEntity.ok(userDto);
     }
 
@@ -30,10 +36,12 @@ public class AdminUserController {
         return ResponseEntity.ok(userDto);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    @PutMapping("/{id}/ban")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Void> banUser(@PathVariable Long id, Authentication authentication) {
+        System.out.println("Logged user roles: " + authentication.getAuthorities());
         authService.deleteUserById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
@@ -41,5 +49,13 @@ public class AdminUserController {
                                                   @Valid @RequestBody UserRequest userDto) {
         UserResponse user = authService.updateUser(id, userDto);
         return ResponseEntity.ok(user);
+    }
+
+
+    @PutMapping("/{id}/role")
+    public ResponseEntity<UserResponse> updateUserRole(@PathVariable Long id,
+                                                   @Valid @RequestBody UserRoleRequest userDto) {
+        UserResponse updatedUser = authService.updateUserRole(id, userDto.getRole());
+        return ResponseEntity.ok(updatedUser);
     }
 }

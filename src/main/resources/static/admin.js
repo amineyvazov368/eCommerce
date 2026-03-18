@@ -1,6 +1,57 @@
 // admin-products.js
 const apiBase = "http://localhost:8080/api/admin/products";
 
+
+
+// ------------------------
+// ✅ API FETCH (token refresh support)
+// ------------------------
+async function apiFetch(url, options = {}) {
+    let token = localStorage.getItem("adminToken");
+
+    options.headers = {
+        ...options.headers,
+        "Authorization": "Bearer " + token,
+        "Content-Type": "application/json"
+    };
+
+    let res = await fetch(url, options);
+
+    // 🔥 ONLY 401 → refresh
+    if (res.status === 401) {
+        const refreshRes = await fetch("http://localhost:8080/api/users/refresh", {
+            method: "POST",
+            credentials: "include"
+        });
+
+        if (refreshRes.ok) {
+            const refreshData = await refreshRes.json();
+            localStorage.setItem("adminToken", refreshData.accessToken);
+
+            // retry original request
+            options.headers["Authorization"] = "Bearer " + refreshData.accessToken;
+            res = await fetch(url, options);
+        } else {
+            alert("Session expired. Please login again.");
+            window.location.href = "index.html";
+            throw new Error("Session expired");
+        }
+    }
+
+    // ❌ Əgər 403-dürsə → role problemidir
+    if (res.status === 403) {
+        throw new Error("Forbidden - You are not authorized");
+    }
+
+    // ❌ digər errorlar
+    if (!res.ok) {
+        throw new Error("API error: " + res.status);
+    }
+
+    // ✅ SAFE JSON parse
+    const text = await res.text();
+    return text ? JSON.parse(text) : null;
+}
 // ================================
 // PRODUCT JS
 // ================================
@@ -18,6 +69,7 @@ addProductBtn.addEventListener("click", () => {
     editMode = false;
     productForm.reset();
     productModalTitle.innerText = "Add Product";
+    populateCategoryDropdown();
     productModal.style.display = "flex";
 });
 
@@ -26,6 +78,26 @@ productClose.addEventListener("click", () => productModal.style.display = "none"
 window.addEventListener("click", e => {
     if (e.target === productModal) productModal.style.display = "none";
 });
+
+
+async function populateCategoryDropdown() {
+    try {
+        const categories = await apiFetch("http://localhost:8080/api/admin/categories");
+
+        const select = document.getElementById("productCategoryId");
+        select.innerHTML = `<option value="">Select Category</option>`; // təmizlə və default
+
+        categories.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat.id;      // backend üçün ID
+            option.textContent = cat.name; // istifadəçi üçün ad
+            select.appendChild(option);
+        });
+
+    } catch (err) {
+        console.error("Failed to load categories for dropdown:", err);
+    }
+}
 
 // Fetch all products
 async function fetchProducts() {
@@ -38,19 +110,7 @@ async function fetchProducts() {
             return;
         }
 
-        const res = await fetch(apiBase, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }
-        });
-
-        if (!res.ok) {
-            console.error("Error fetching products:", res.status, await res.text());
-            return;
-        }
-
-        const products = await res.json();
+        const products = await apiFetch(apiBase);
         if (!Array.isArray(products)) {
             console.error("Products is not an array:", products);
             return;
@@ -66,7 +126,7 @@ async function fetchProducts() {
                 <td>${p.price}₼</td>
                 <td><img src="${p.image}" width="50" height="50"/></td>
                 <td>
-                    <button class="editBtn">Edit</button>
+                    <button class="editBtn">Update</button>
                     <button class="deleteBtn">Delete</button>
                 </td>
             `;
@@ -81,6 +141,9 @@ async function fetchProducts() {
                 document.getElementById("productStock").value = p.stock;
                 document.getElementById("productPrice").value = p.price;
                 document.getElementById("productImage").value = p.image;
+                populateCategoryDropdown().then(() => {
+                    document.getElementById("productCategoryId").value = p.category.id;
+                });
                 productModal.style.display = "flex";
             };
 
@@ -89,23 +152,11 @@ async function fetchProducts() {
                 if (!confirm("Are you sure to delete this product?")) return;
 
                 try {
-                    const deleteRes = await fetch(`${apiBase}/${p.id}`, {
-                        method: "DELETE",
-                        headers: {
-                            "Authorization": `Bearer ${token}`
-                        }
-                    });
-
-                    if (!deleteRes.ok) {
-                        console.error("Failed to delete product:", deleteRes.status, await deleteRes.text());
-                        alert("Failed to delete product!");
-                        return;
-                    }
-
-                    fetchProducts();
+                    await apiFetch(`${apiBase}/${p.id}`, { method: "DELETE" }); // <- apiFetch istifadə olunur
+                    fetchProducts(); // refresh table
                 } catch (err) {
                     console.error("Delete error:", err);
-                    alert("Delete error!");
+                    alert("Failed to delete product!");
                 }
             };
 
@@ -147,21 +198,11 @@ productForm.addEventListener("submit", async (e) => {
             method = "PUT";
         }
 
-        const res = await fetch(url, {
+        await apiFetch(url, {
             method,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(productData)
         });
-
-        if (!res.ok) {
-            const errText = await res.text();
-            console.error("Save product failed:", res.status, errText);
-            alert("Failed to save product!");
-            return;
-        }
 
         productModal.style.display = "none";
         editMode = false;
@@ -210,19 +251,7 @@ async function fetchCategories() {
             return;
         }
 
-        const res = await fetch(`http://localhost:8080/api/admin/categories`, {
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`
-            }
-        });
-
-        if (!res.ok) {
-            console.error("Error fetching categories:", res.status, await res.text());
-            return;
-        }
-
-        const categories = await res.json();
+        const categories = await apiFetch(`http://localhost:8080/api/admin/categories`);
         if (!Array.isArray(categories)) {
             console.error("Categories is not an array:", categories);
             return;
@@ -234,7 +263,7 @@ async function fetchCategories() {
                 <td>${cat.id}</td>
                 <td>${cat.name}</td>
                 <td>
-                    <button class="editBtn">Edit</button>
+                    <button class="editBtn">Update</button>
                     <button class="deleteBtn">Delete</button>
                 </td>
             `;
@@ -253,18 +282,7 @@ async function fetchCategories() {
                 if (!confirm("Are you sure to delete this category?")) return;
 
                 try {
-                    const deleteRes = await fetch(`http://localhost:8080/api/admin/categories/${cat.id}`, {
-                        method: "DELETE",
-                        headers: {
-                            "Authorization": `Bearer ${token}`
-                        }
-                    });
-
-                    if (!deleteRes.ok) {
-                        console.error("Failed to delete category:", deleteRes.status, await deleteRes.text());
-                        alert("Failed to delete category!");
-                        return;
-                    }
+                    await apiFetch(`http://localhost:8080/api/admin/categories/${cat.id}`, { method: "DELETE" });
 
                     fetchCategories();
                 } catch (err) {
@@ -299,21 +317,17 @@ categoryForm.addEventListener("submit", async (e) => {
         }
 
         if (id) {
-            await fetch(`http://localhost:8080/api/admin/categories/${id}`, {
+            // Edit category
+            await apiFetch(`http://localhost:8080/api/admin/categories/${id}`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(categoryData)
             });
         } else {
-            await fetch(`http://localhost:8080/api/admin/categories`, {
+            // Add category
+            await apiFetch(`http://localhost:8080/api/admin/categories`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(categoryData)
             });
         }
@@ -328,15 +342,30 @@ categoryForm.addEventListener("submit", async (e) => {
 });
 
 // Navbar click switches
+document.getElementById("navUsers").addEventListener("click", () => {
+    // Digər section-ları gizlət
+    document.getElementById("productsSection").style.display = "none";
+    document.getElementById("categoriesSection").style.display = "none";
+
+    // Users section-u göstər
+    document.getElementById("usersSection").style.display = "block";
+
+    // Users-u fetch et
+    fetchUsers();
+});
+
+// Məsələn, artıq mövcud olan Products və Categories listener-lar belə qalır:
 document.getElementById("navCategories").addEventListener("click", () => {
     document.getElementById("productsSection").style.display = "none";
     document.getElementById("categoriesSection").style.display = "block";
+    document.getElementById("usersSection").style.display = "none"; // əlavə et
     fetchCategories();
 });
 
 document.getElementById("navProducts").addEventListener("click", () => {
     document.getElementById("productsSection").style.display = "block";
     document.getElementById("categoriesSection").style.display = "none";
+    document.getElementById("usersSection").style.display = "none"; // əlavə et
     fetchProducts();
 });
 
@@ -351,4 +380,145 @@ homeBtn.addEventListener("click", () => {
 
     // Əgər başqa path-dirsə dəyiş:
     // window.location.href = "/home.html";
+});
+
+
+
+// ================================
+// USERS JS
+// ================================
+const usersTableBody = document.querySelector("#usersTable tbody");
+const addUserBtn = document.getElementById("addUserBtn");
+const userModal = document.getElementById("userModal");
+const userModalTitle = document.getElementById("userModalTitle");
+const userClose = userModal.querySelector(".close");
+const userForm = document.getElementById("userForm");
+
+let editUserMode = false;
+
+// Open Add User Modal
+// addUserBtn.addEventListener("click", () => {
+//     editUserMode = false;
+//     userForm.reset();
+//     userModalTitle.innerText = "Add User";
+//     userModal.style.display = "flex";
+// });
+
+// Close User Modal
+userClose.addEventListener("click", () => userModal.style.display = "none");
+window.addEventListener("click", e => {
+    if (e.target === userModal) userModal.style.display = "none";
+});
+
+// Fetch all users
+async function fetchUsers() {
+    usersTableBody.innerHTML = "";
+    try {
+        const users = await apiFetch("http://localhost:8080/api/admin/users");
+
+        users.forEach(u => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${u.id}</td>
+                <td>${u.userName}</td>
+                <td>${u.firstName}</td>
+                <td>${u.lastName}</td>
+                <td>${u.email}</td>
+                <td>${u.role}</td>
+                <td>
+                    <button class="editBtn">Update</button>
+                    <button class="deleteBtn">Ban</button>
+                </td>
+            `;
+
+            // Edit button
+            // Edit button - yalnız rol dəyişmək üçün
+            tr.querySelector(".editBtn").onclick = () => {
+                editUserMode = true;
+                userModalTitle.innerText = "Change User Role";
+
+                // User info göstəririk, amma read-only
+                document.getElementById("userId").value = u.id;
+                document.getElementById("userUsername").value = u.userName;
+                document.getElementById("userFirstName").value = u.firstName;
+                document.getElementById("userLastName").value = u.lastName;
+                document.getElementById("userEmail").value = u.email;
+
+                // Read-only etmək
+                document.getElementById("userUsername").readOnly = true;
+                document.getElementById("userFirstName").readOnly = true;
+                document.getElementById("userLastName").readOnly = true;
+                document.getElementById("userEmail").readOnly = true;
+
+                // Rol dropdown-u set etmək
+                const roleSelect = document.getElementById("userRole");
+                roleSelect.innerHTML = `
+        <option value="USER">User</option>
+        <option value="ADMIN">Admin</option>
+    `;
+                roleSelect.value = u.role; // mövcud rol seçilir
+                userModal.style.display = "flex";
+            };
+
+            // Delete button
+            tr.querySelector(".deleteBtn").onclick = async () => {
+                if (!confirm("Are you sure to delete this user?")) return;
+
+
+                try {
+                    // API call using apiFetch (JWT token already handled)
+                    await apiFetch(`http://localhost:8080/api/admin/users/${u.id}/ban`, {
+                        method: "PUT"
+                    });
+
+                    // Yenidən istifadəçiləri fetch et
+                    fetchUsers();
+
+                } catch (err) {
+                    console.error("Delete user error:", err);
+                    alert("Failed to delete user!");
+                }
+            };
+
+            usersTableBody.appendChild(tr);
+        });
+    } catch (err) {
+        console.error("Fetch users error:", err);
+        alert("Error fetching users!");
+    }
+}
+
+// User Form Submit
+userForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const id = document.getElementById("userId").value;
+    const role = "ROLE_" + document.getElementById("userRole").value; // yalnız rol
+
+    const userRoleData = { role }; // yalnız rol göndərilir
+
+    try {
+        // Yeni endpoint yalnız rol dəyişmək üçündür
+        await apiFetch(`http://localhost:8080/api/admin/users/${id}/role`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userRoleData)
+        });
+
+        userModal.style.display = "none";
+        editUserMode = false;
+        fetchUsers(); // table-i refresh et
+
+    } catch (err) {
+        console.error("Update user role error:", err);
+        alert("Failed to update user role!");
+    }
+});
+
+// Navbar click switches
+document.getElementById("navUsers").addEventListener("click", () => {
+    document.getElementById("productsSection").style.display = "none";
+    document.getElementById("categoriesSection").style.display = "none";
+    document.getElementById("usersSection").style.display = "block";
+    // fetchUsers();
 });

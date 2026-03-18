@@ -14,6 +14,7 @@
         <ul>
             <li><a href="#" id="navProducts">Products</a></li>
             <li><a href="#" id="navCategories">Categories</a></li>
+            <li><a href="#" id="navUsers">Users</a></li>
         </ul>
     </div>
 
@@ -21,6 +22,47 @@
         <button id="homeBtn">🏠 Home</button>
     </div>
 </nav>
+
+<div id="usersSection" style="display:none;">
+    <h2>Users</h2>
+
+    <table id="usersTable">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<!-- User Modal -->
+<div class="modal" id="userModal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3 id="userModalTitle">Add User</h3>
+        <form id="userForm">
+            <input type="hidden" id="userId">
+            <input type="text" id="userUsername" placeholder="Username" required>
+            <input type="text" id="userFirstName" placeholder="First Name" required>
+            <input type="text" id="userLastName" placeholder="Last Name">
+            <input type="email" id="userEmail" placeholder="Email" required>
+<!--            <input type="password" id="userPassword" placeholder="Password" required>-->
+            <select id="userRole" required>
+                <option value="">Select Role</option>
+                <option value="ADMIN">ADMIN</option>
+                <option value="USER">USER</option>
+            </select>
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
 
 <div class="admin-content" id="productsSection">
     <h2>Products</h2>
@@ -72,7 +114,9 @@
             <input type="number" id="productStock" placeholder="Stock" required>
             <input type="number" id="productPrice" placeholder="Price" required step="0.01">
             <input type="text" id="productImage" placeholder="Image URL" required>
-            <input type="number" id="productCategoryId" placeholder="Category ID" required>
+            <select id="productCategoryId" required>
+                <option value="">Select Category</option>
+            </select>
             <button type="submit">Save</button>
         </form>
     </div>

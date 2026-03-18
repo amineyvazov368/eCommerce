@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:63342")
+@CrossOrigin(origins = "http://localhost:63342", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/products")
 @RequiredArgsConstructor

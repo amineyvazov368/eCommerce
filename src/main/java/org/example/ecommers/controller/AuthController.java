@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:63342", allowCredentials = "true")
 public class AuthController {
 
 
@@ -33,6 +34,7 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(loginUser);
     }
 
+    @CrossOrigin(origins = "http://localhost:63342", allowCredentials = "true")
     @PostMapping("/refresh")
     public RefreshTokenResponse refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         return userService.refresh(refreshTokenRequest);

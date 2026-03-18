@@ -7,6 +7,7 @@ import org.example.ecommers.security.JwtTokenFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -14,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
+@EnableMethodSecurity
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -39,7 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/carts/**").permitAll()
                         .requestMatchers("/api/cart-items/**").permitAll()
                         .requestMatchers("/api/categories/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
                 )

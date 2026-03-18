@@ -21,12 +21,40 @@ if (savedUser) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const savedUser = localStorage.getItem("currentUser");
+
+    if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+
+        // Navbar update
+        const userNameDisplay = document.getElementById("userNameDisplay");
+        const userNameText = document.getElementById("userNameText");
+        const userActions = document.getElementById("userActions");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        if (userNameDisplay) userNameDisplay.style.display = "block";
+        if (userNameText) userNameText.innerText = currentUser.userName || currentUser.firstName;
+        if (userActions) userActions.style.display = "none";
+        if (logoutBtn) logoutBtn.onclick = logoutUser;
+
+        // Admin page check (optional)
+        if (currentUser.role === "ROLE_ADMIN" && window.location.pathname !== "/admin.html") {
+            console.log("Admin is logged in on home page");
+            // istəsən burda avtomatik admin.html redirect edə bilərsən
+            // window.location.href = "admin.html";
+        }
+
+        // Cart fetch only for normal users
+        if (currentUser.role !== "ROLE_ADMIN") {
+            fetchCart();
+        }
+    }
+
+    // Navbar və kateqoriyalar / products load
     initNavbar();
     fetchCategories();
     fetchProducts();
-    fetchCart();
 });
-
 // NAVBAR + MODALS
 function initNavbar() {
     const loginBtn = document.getElementById("loginBtn");
@@ -49,6 +77,39 @@ function initNavbar() {
     document.getElementById("loginSubmit").onclick = loginUser;
     document.getElementById("registerSubmit").onclick = registerUser;
 }
+async function apiFetch(url, options = {}) {
+    let token = localStorage.getItem("adminToken");
+
+    options.headers = {
+        ...options.headers,
+        "Authorization": "Bearer " + token
+    };
+
+    let res = await fetch(url, options);
+
+    if (res.status === 403 || res.status === 401) {
+        // Refresh token endpoint çağır
+        const refreshRes = await fetch(`${apiBase}/api/users/refresh`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ refreshToken: localStorage.getItem("refreshToken") })
+        });
+
+        if (refreshRes.ok) {
+            const refreshData = await refreshRes.json();
+            localStorage.setItem("adminToken", refreshData.accessToken);
+
+            // Retry original request
+            options.headers["Authorization"] = "Bearer " + refreshData.accessToken;
+            res = await fetch(url, options);
+        } else {
+            logoutUser();
+            throw new Error("Session expired. Please login again.");
+        }
+    }
+
+    return res.json();
+}
 
 // LOGIN
 async function loginUser() {
@@ -62,45 +123,52 @@ async function loginUser() {
             body: JSON.stringify({userName: username, password})
         });
 
-        if (res.ok) {
-            const data = await res.json();
-            const user = data.userDto; // real user object
-
-            currentUser = {
-                id: user.id,
-                userName: user.userName,
-                firstName: user.firstName,
-                role: user.role,
-                token: data.accessToken // JWT varsa
-            };
-
-            localStorage.setItem("currentUser", JSON.stringify(currentUser));
-            // JWT token-i localStorage-də saxla
-            localStorage.setItem("adminToken", data.accessToken);
-
-            // Navbar update
-            document.getElementById("userNameDisplay").style.display = "block";
-            document.getElementById("userNameText").innerText = currentUser.userName || currentUser.firstName;
-            document.getElementById("userActions").style.display = "none";
-
-            // Logout düyməsini bağla
-            document.getElementById("logoutBtn").onclick = logoutUser;
-
-            document.getElementById("loginModal").style.display = "none";
-
-            // Admin redirect
-            if (currentUser.role === "ADMIN") {
-                // admin token artıq localStorage-də var
-                window.location.href = "admin.html";
-            } else {
-                fetchCart();
-            }
-
-        } else {
+        if (!res.ok) {
             const errText = await res.text();
             console.error("Login failed:", res.status, errText);
             alert("Login failed!");
+            return;
         }
+
+        const data = await res.json();
+        console.log(data);
+
+        const user = data.userDto || data.user;
+        if (!user) {
+            console.error("Login response doesn't contain user info", data);
+            alert("Login failed! User info missing.");
+            return;
+        } // ✅ backend response ilə uyğun
+
+        currentUser = {
+            id: user.id,
+            userName: user.userName,
+            firstName: user.firstName,
+            role: user.role,
+            token: data.accessToken
+        };
+
+        // localStorage update
+        localStorage.setItem("currentUser", JSON.stringify(currentUser));
+        localStorage.setItem("adminToken", data.accessToken);
+        localStorage.setItem("role", user.role); // ✅ burada user.role istifadə olundu
+
+        // Navbar update
+        document.getElementById("userNameDisplay").style.display = "block";
+        document.getElementById("userNameText").innerText = currentUser.userName || currentUser.firstName;
+        document.getElementById("userActions").style.display = "none";
+        document.getElementById("logoutBtn").onclick = logoutUser;
+
+        // Close login modal
+        document.getElementById("loginModal").style.display = "none";
+
+        // Admin redirect
+        if (currentUser.role === "ROLE_ADMIN") {
+            window.location.href = "admin.html";
+        } else {
+            fetchCart(); // normal user üçün basket load
+        }
+
     } catch (err) {
         console.error(err);
         alert("Login error!");
@@ -211,25 +279,21 @@ async function fetchCart() {
     if (!currentUser || !currentUser.id) return;
 
     try {
-        const headers = {};
-        if (currentUser.token) headers["Authorization"] = `Bearer ${currentUser.token}`;
+        const data = await apiFetch(`${apiBase}/api/carts/me`);
+        cartItems = data.cartItems || [];
 
-        const res = await fetch(`${apiBase}/api/carts/me`, {headers});
-        if (res.ok) {
-            const data = await res.json();
-            cartItems = data.cartItems || [];
+        // Cart count
+        document.getElementById("cartCount").innerText = cartItems.length;
 
-            document.getElementById("cartCount").innerText = cartItems.length;
+        // Total price
+        let total = cartItems.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
+        document.getElementById("cartTotalPrice").innerText = total.toFixed(2) + '₼';
 
-            let total = cartItems.reduce((sum, item) => sum + parseFloat(item.price) * item.quantity, 0);
-            document.getElementById("cartTotalPrice").innerText = total.toFixed(2) + '₼';
+        // Dropdown render
+        renderCartDropdown();
 
-            renderCartDropdown(); // dropdown update
-        } else {
-            console.error("Fetch cart failed", await res.text());
-        }
     } catch (err) {
-        console.error("Fetch cart error", err);
+        console.error("Fetch cart failed", err);
     }
 }
 
@@ -266,15 +330,31 @@ async function addToCart(productId, qty) {
 }
 
 function logoutUser() {
-    currentUser = null;           // user məlumatlarını sil
-    cartItems = [];               // cart sıfırla
+    // 1️⃣ User və cart məlumatlarını sil
+    currentUser = null;
+    cartItems = [];
+
+    // 2️⃣ localStorage-i təmizlə
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("role");
+
+    // 3️⃣ Navbar UI update
     document.getElementById("userNameDisplay").style.display = "none";
     document.getElementById("userActions").style.display = "block";
-    document.getElementById("cartCount").innerText = 0; // cart count sıfırla
-    document.getElementById("cartTotalPrice")?.remove(); // total price sil
 
-    // opsional: home page refresh
+    // 4️⃣ Cart UI update
+    const cartCountEl = document.getElementById("cartCount");
+    if (cartCountEl) cartCountEl.innerText = 0;
+
+    const cartTotalPriceEl = document.getElementById("cartTotalPrice");
+    if (cartTotalPriceEl) cartTotalPriceEl.remove();
+
+    // 5️⃣ Opsional: home page refresh / products reload
     fetchProducts();
+
+    // 6️⃣ Redirect istəsən home page-ə
+    window.location.href = "home.html";
 }
 
 function updateNavbarAfterLogin() {

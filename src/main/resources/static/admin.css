@@ -435,3 +435,120 @@ tr:nth-child(even) {
 button {
     cursor: pointer;
 }
+
+/* user modal */
+#userModal {
+    display: none; /* hidden by default */
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* modal content */
+#userModal form {
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    width: 350px;
+    max-width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* inputs & select */
+#userModal input,
+#userModal select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+}
+
+/* read-only fields styling */
+#userModal input[readonly] {
+    background-color: #f0f0f0;
+    color: #555;
+    cursor: not-allowed;
+}
+
+/* submit button */
+#userModal button[type="submit"] {
+    padding: 10px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#userModal button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* modal title */
+#userModal #userModalTitle {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* close button if exists */
+#userModal .close {
+    position: absolute;
+    top: 10px; right: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Category select (dropdown) */
+#productCategoryId {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    width: 100%;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* hover effekti */
+#productCategoryId:hover {
+    border-color: #888;
+}
+
+/* focus effekti */
+#productCategoryId:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+/* option-lar üçün (bəzi browser-lərdə işləyir) */
+#productCategoryId option {
+    padding: 10px;
+}
+
+/* disabled/default option */
+#productCategoryId option[value=""] {
+    color: #999;
+}
+
+/* responsive */
+@media (max-width: 600px) {
+    #productCategoryId {
+        font-size: 13px;
+        padding: 8px;
+    }
+}
