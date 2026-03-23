@@ -8,9 +8,11 @@ import java.util.List;
 
 public record OrderResponse(
         Long id,
+        String username,
         LocalDateTime crateAt,
         BigDecimal totalPrice,
         OrderStatus status,
+        LocalDateTime createdAt ,
         List<OrderItemResponse> items
 ) {
 }

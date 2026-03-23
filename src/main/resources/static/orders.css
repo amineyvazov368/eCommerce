@@ -1,0 +1,160 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#homeBtn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-bottom: 20px;
+}
+
+#homeBtn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+#ordersContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.order-item {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between; /* order adı solda, tarix sağda */
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.order-date {
+    font-size: 0.9em;
+    color: #888;
+}
+
+.cancelOrderBtn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px;
+}
+
+.cancelOrderBtn:hover {
+    background-color: #a71d2a;
+    transform: scale(1.05);
+}
+
+hr {
+    margin-top: 15px;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.order-date {
+    font-size: 0.9em;
+    color: #888;
+}
+
+.order-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.order-product {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.order-product img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.product-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-name {
+    font-weight: bold;
+}
+
+.product-qty, .product-price {
+    font-size: 0.9em;
+    color: #555;
+}
+
+.cancelOrderBtn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.cancelOrderBtn:hover {
+    background-color: #a71d2a;
+    transform: scale(1.05);
+}
+
+.order-status {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.status-text {
+    color: #007bff;
+}
+.empty-orders {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    margin-top: 50px;
+    font-size: 1.2em;
+}
+
+.empty-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}

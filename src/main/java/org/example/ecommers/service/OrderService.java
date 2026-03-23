@@ -42,25 +42,31 @@ public class OrderService {
     }
 
     public List<OrderResponse> getUserOrders(Long userId) {
-        List<Order> orders = orderRepository.findByUserId(userId);
+        List<Order> orders = orderRepository.findByUserIdAndStatusNot(userId, OrderStatus.CANCELLED);
         return orders.stream().map(orderMapper::toDto)
                 .toList();
     }
 
     public List<OrderResponse> getAllOrders(){
-        List<Order> orders = orderRepository.findAll();
+        List<Order> orders = orderRepository.findByStatusNot(OrderStatus.CANCELLED);
         return orders.stream().map(orderMapper::toDto)
                 .toList();
     }
 
-    public void cancelOrder(Long orderId, Long userId, boolean isAdmin){
+    public OrderResponse cancelOrder(Long orderId, Long userId, boolean isAdmin){
         Order order= orderRepository.findById(Math.toIntExact(orderId))
                 .orElseThrow(()->new RuntimeException("order not found"));
 
         if (!isAdmin && !order.getUser().getId().equals(userId)) {
             throw new RuntimeException("This is not your order");
         }
-         orderRepository.delete(order);
 
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            throw new RuntimeException("Order already cancelled");
+        }
+        order.setStatus(OrderStatus.CANCELLED);
+        Order savedOrder = orderRepository.save(order);
+
+        return orderMapper.toDto(savedOrder);
     }
 }

@@ -52,9 +52,11 @@ public class OrderMapperImpl implements OrderMapper {
 
         return new OrderResponse(
                 order.getId(),
+                order.getUser().getUserName(),
                 order.getCreateAt(),
                 order.getTotalPrice(),
                 order.getStatus(),
+                order.getCreateAt(),
                 itemResponses
         );
     }

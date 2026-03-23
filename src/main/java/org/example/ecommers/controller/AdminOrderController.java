@@ -22,6 +22,7 @@ public class AdminOrderController {
        return ResponseEntity.ok(orderResponseList);
     }
 
+    @PutMapping("/cancel/{orderId}")
     public ResponseEntity<Void> deleteOrder(@PathVariable long orderId){
         orderService.cancelOrder(orderId,null,true);
 

@@ -40,8 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Admin page check (optional)
         if (currentUser.role === "ROLE_ADMIN" && window.location.pathname !== "/admin.html") {
             console.log("Admin is logged in on home page");
-            // istəsən burda avtomatik admin.html redirect edə bilərsən
-            // window.location.href = "admin.html";
+
         }
 
         // Cart fetch only for normal users
@@ -444,4 +443,54 @@ function renderCartDropdown() {
     });
 
     document.getElementById("cartDropdownTotal").innerText = `Total: ${total.toFixed(2)}₼`;
+}
+
+document.getElementById("createOrderBtn").onclick = async () => {
+    if (!currentUser || !currentUser.token) {
+        alert("Token tapılmadı, login olun!");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${apiBase}/api/orders/cart`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + currentUser.token
+            }
+        });
+
+        if (!response.ok) throw new Error("Order creation failed");
+
+        // Order uğurla yaradıldı → sadəcə alert veririk
+        alert("Sifariş uğurla yaradıldı!");
+
+        // İstəsən cartı da təmizləyə bilərsən burada
+        updateCartUI([]); // updateCartUI = sənin cart update funksiyan
+    } catch (error) {
+        console.error(error);
+        alert("Order yaradılmadı!");
+    }
+};
+
+document.getElementById("myOrdersBtn").onclick = () => {
+    // İstifadəçini order səhifəsinə yönləndiririk
+    window.location.href = "order.html";
+};
+
+
+function updateCartUI(cartItems) {
+    const container = document.getElementById("cartItemsContainer");
+    container.innerHTML = '';
+    let totalPrice = 0;
+
+    cartItems.forEach(item => {
+        const div = document.createElement("div");
+        div.textContent = `${item.productName} x ${item.quantity} = ${item.price * item.quantity}₼`;
+        container.appendChild(div);
+        totalPrice += item.price * item.quantity;
+    });
+
+    document.getElementById("cartCount").textContent = cartItems.length;
+    document.getElementById("cartTotalPrice").textContent = totalPrice + "₼";
 }

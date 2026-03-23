@@ -434,3 +434,39 @@ body {
         top: 55px;
     }
 }
+
+#myOrdersBtn {
+    background-color: #ff6f61; /* canlı rəng */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    margin-left: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+#myOrdersBtn:hover {
+    background-color: #ff3b2e; /* hover effekti */
+}
+
+#createOrderBtn {
+    background-color: #28a745; /* yaşıl rəng, "uğur" hissi verir */
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+#createOrderBtn:hover {
+    background-color: #218838; /* hover zamanı daha tünd yaşıl */
+    transform: scale(1.05); /* kiçik böyümə effekti */
+}
+
+#createOrderBtn:active {
+    transform: scale(0.95); /* klikləyəndə kiçik press effekti */
+}

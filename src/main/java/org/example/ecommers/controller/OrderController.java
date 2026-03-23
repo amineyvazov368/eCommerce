@@ -21,9 +21,16 @@ public class OrderController {
     private final OrderService orderService;
     private final UserRepository userRepository;
 
-    @PostMapping("/cart/{userId}")
-    public ResponseEntity<OrderResponse> createOrder(@PathVariable Long userId){
-        OrderResponse orderResponse = orderService.createOrder(userId);
+    @PostMapping("/cart")
+    public ResponseEntity<OrderResponse> createOrder(Authentication auth) {
+
+        String username = auth.getName();
+
+        User user = userRepository.findByUserName(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        OrderResponse orderResponse = orderService.createOrder(user.getId());
+
         return ResponseEntity.ok(orderResponse);
     }
 
@@ -41,7 +48,8 @@ public class OrderController {
         return ResponseEntity.ok(orderResponse);
     }
 
-    @DeleteMapping("/cancel/{orderId}")
+
+    @PutMapping("/cancel/{orderId}")
     public ResponseEntity<Void> deleteOrder(@PathVariable Long orderId, Authentication auth){
         String username = auth.getName();
         User user =userRepository.findByUserName(username)

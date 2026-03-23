@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/carts/**").permitAll()
                         .requestMatchers("/api/cart-items/**").permitAll()
                         .requestMatchers("/api/categories/**").permitAll()
+                        .requestMatchers("/api/orders/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()

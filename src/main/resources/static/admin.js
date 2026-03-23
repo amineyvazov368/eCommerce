@@ -522,3 +522,115 @@ document.getElementById("navUsers").addEventListener("click", () => {
     document.getElementById("usersSection").style.display = "block";
     // fetchUsers();
 });
+
+// Admin navbar link
+const navOrders = document.createElement('a');
+navOrders.href = "#";
+navOrders.id = "navOrders";
+navOrders.textContent = "Orders";
+document.querySelector(".nav-left ul").appendChild(navOrders);
+
+const ordersSection = document.getElementById("ordersSection");
+navOrders.addEventListener("click", () => {
+    hideAllSections();
+    ordersSection.style.display = "block";
+    fetchOrders();
+});
+
+// Bütün digər bölmələri gizlədən funksiya
+function hideAllSections() {
+    document.getElementById("productsSection").style.display = "none";
+    document.getElementById("categoriesSection").style.display = "none";
+    document.getElementById("usersSection").style.display = "none";
+    ordersSection.style.display = "none";
+}
+
+// Backend base URL
+const apiBases = "http://localhost:8080";
+
+// Fetch orders
+async function fetchOrders() {
+    try {
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        const adminToken = currentUser?.token;
+
+        if (!adminToken) {
+            alert("Admin olaraq login olun!");
+            return;
+        }
+
+        const response = await fetch(`${apiBases}/api/admin/orders`, {
+            headers: {
+                "Authorization": "Bearer " + adminToken
+            }
+        });
+
+        if (!response.ok) throw new Error(`Failed to fetch orders: ${response.status}`);
+
+        const orders = await response.json();
+        renderOrders(orders);
+
+    } catch (err) {
+        console.error(err);
+        alert("Orderləri gətirmək mümkün olmadı!");
+    }
+}
+
+// Render orders table
+function renderOrders(orders) {
+    const tbody = document.querySelector("#ordersTable tbody");
+    tbody.innerHTML = "";
+
+    if (!orders || orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Heç bir order yoxdur</td></tr>`;
+        return;
+    }
+
+    orders.forEach(order => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${order.id}</td>
+            <td>${order.username || "Unknown"}</td>
+            <td>${order.totalPrice}₼</td>
+            <td>${order.status}</td>
+            <td>${order.createdAt ? new Date(order.createdAt).toLocaleString() : "Tarix yoxdur"}</td>
+            <td>
+                <button class="cancelOrderBtn" data-id="${order.id}">Cancel</button>
+            </td>
+        `;
+
+        // Cancel button
+        tr.querySelector(".cancelOrderBtn").onclick = async () => {
+            const confirmCancel = confirm("Siz əminsiniz ki, bu orderi ləğv etmək istəyirsiniz?");
+            if (!confirmCancel) return;
+
+            try {
+                const orderId = tr.querySelector(".cancelOrderBtn").dataset.id;
+                const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+                const adminToken = currentUser?.token;
+
+                if (!adminToken) {
+                    alert("Admin olaraq login olun!");
+                    return;
+                }
+
+                const cancelResp = await fetch(`${apiBases}/api/admin/orders/cancel/${orderId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": "Bearer " + adminToken
+                    }
+                });
+
+                if (!cancelResp.ok) throw new Error("Cancel failed");
+                alert("Order uğurla ləğv edildi!");
+                fetchOrders();
+            } catch (err) {
+                console.error(err);
+                alert("Order ləğv edilə bilmədi!");
+            }
+        };
+
+        tbody.appendChild(tr);
+    });
+}
