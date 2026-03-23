@@ -103,32 +103,16 @@ public class CartItemService {
         return cartItemMapperImpl.cartItemToDto(cartItem);
     }
 
-//    public void removeCartItem(Long cartItemId) {
-//
-//        CartItem cartItem = cartItemRepository.findById(cartItemId)
-//                .orElseThrow(() -> new RuntimeException("CartItem not found"));
-//
-//        cartItemRepository.delete(cartItem);
-//        Cart cart = cartItem.getCart();
-//        cartService.calculateCartTotal(cart);
-//        cartRepository.save(cart);
-//
-//    }
-//
-//    @Transactional
     public void removeCartItem(Long cartItemId) {
-        // CartItem varsa tap, yoxdursa 404 qaytar
+
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new RuntimeException("CartItem not found with id " + cartItemId));
 
-        Cart cart = cartItem.getCart(); // əvvəl alın
-
-        cartItemRepository.delete(cartItem); // delete əməliyyatı
-
-        // Cart total-u yenilə
+        Cart cart = cartItem.getCart();
+        cartItemRepository.delete(cartItem);
         if (cart != null) {
             cartService.calculateCartTotal(cart);
-             cartRepository.save(cart); // @Transactional varsa lazım deyil
+             cartRepository.save(cart);
         }
     }
 

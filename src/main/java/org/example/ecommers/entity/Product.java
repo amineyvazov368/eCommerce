@@ -39,6 +39,9 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     private List<CartItem> cartItems = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItems;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
