@@ -304,7 +304,7 @@ async function fetchCategories() {
 categoryForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const id = document.getElementById("categoryId").value;
+    const id = document.getElementById("categoryId").value.trim();
     const name = document.getElementById("categoryName").value;
     const categoryData = {name};
 
@@ -333,6 +333,8 @@ categoryForm.addEventListener("submit", async (e) => {
         }
 
         categoryModal.style.display = "none";
+        document.getElementById("categoryId").value = "";
+        document.getElementById("categoryName").value = "";
         fetchCategories();
 
     } catch (err) {
@@ -359,6 +361,7 @@ document.getElementById("navCategories").addEventListener("click", () => {
     document.getElementById("productsSection").style.display = "none";
     document.getElementById("categoriesSection").style.display = "block";
     document.getElementById("usersSection").style.display = "none"; // əlavə et
+    document.getElementById("ordersSection").style.display = "none";
     fetchCategories();
 });
 
@@ -366,6 +369,7 @@ document.getElementById("navProducts").addEventListener("click", () => {
     document.getElementById("productsSection").style.display = "block";
     document.getElementById("categoriesSection").style.display = "none";
     document.getElementById("usersSection").style.display = "none"; // əlavə et
+    document.getElementById("ordersSection").style.display = "none";
     fetchProducts();
 });
 
@@ -520,6 +524,7 @@ document.getElementById("navUsers").addEventListener("click", () => {
     document.getElementById("productsSection").style.display = "none";
     document.getElementById("categoriesSection").style.display = "none";
     document.getElementById("usersSection").style.display = "block";
+    document.getElementById("ordersSection").style.display = "none";
     // fetchUsers();
 });
 

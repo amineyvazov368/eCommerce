@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:63342", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:5174", allowCredentials = "true")
 public class AuthController {
 
 

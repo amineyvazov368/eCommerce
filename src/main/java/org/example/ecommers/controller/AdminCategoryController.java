@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/admin/categories")
 @CrossOrigin(origins = "http://localhost:63342", allowCredentials = "true")
+//@CrossOrigin(origins = "http://localhost:5175", allowCredentials = "true")
 @RequiredArgsConstructor
 public class AdminCategoryController {
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.ecommers.dto.response.CategoryDto;
 import org.example.ecommers.entity.Category;
 import org.example.ecommers.exception.category.CategoryAlreadyExistsException;
+import org.example.ecommers.exception.category.CategoryHasProductsException;
 import org.example.ecommers.exception.category.CategoryNotFoundException;
 import org.example.ecommers.mapper.CategoryMapperImpl;
 import org.example.ecommers.repository.CategoryRepository;
@@ -80,8 +81,7 @@ public class CategoryService {
                 productRepository.existsByCategoryId(id);
 
         if (hasProducts) {
-            throw new RuntimeException(
-                    "Category cannot be deleted because it has products");
+            throw new CategoryHasProductsException();
         }
 
         categoryRepository.delete(category);

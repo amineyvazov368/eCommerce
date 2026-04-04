@@ -4,6 +4,7 @@ import org.example.ecommers.exception.cart.CartAlreadyExistsException;
 import org.example.ecommers.exception.cart.CartItemNotFoundException;
 import org.example.ecommers.exception.cart.CartNotFoundException;
 import org.example.ecommers.exception.category.CategoryAlreadyExistsException;
+import org.example.ecommers.exception.category.CategoryHasProductsException;
 import org.example.ecommers.exception.category.CategoryNotFoundException;
 import org.example.ecommers.exception.product.ProductAlreadyExistsException;
 import org.example.ecommers.exception.product.ProductNotFoundException;
@@ -51,6 +52,12 @@ public class GlobalException {
         errorBody.put("message", ex.getMessage());
 
         return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(CategoryHasProductsException.class)
+    public ResponseEntity<String> handleCategoryHasProductsException(
+            CategoryHasProductsException ex) {
+        return ResponseEntity.status(409).body(ex.getMessage());
     }
 
     @ExceptionHandler(CategoryAlreadyExistsException.class)
