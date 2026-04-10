@@ -3,7 +3,6 @@
 Spring Boot REST API for managing products, categories, and shopping cart operations.
 
 🚀 Tech Stack
-
 Java 17
 Spring Boot
 Spring Data JPA
@@ -14,7 +13,6 @@ Lombok
 ModelMapper
 
 📌 Features
-
 Product management system
 Category-based filtering (Men, Women, Child, Smart)
 Search products by name
@@ -25,8 +23,7 @@ Cart management system
 REST API architecture
 
 🧠 Logic
-
-Products are stored in database
+Products are stored in the database
 Users can browse and search products
 Products can be filtered by category
 Users add products to cart
@@ -34,7 +31,6 @@ Cart manages quantity and items
 System handles basic shopping workflow
 
 🔌 API
-
 GET /api/products
 GET /api/products/search?name=
 GET /api/products/category/{category}
@@ -47,3 +43,5 @@ GET /api/cart
 git clone https://github.com/amineyvazov368/eCommerce
 cd eCommerce
 mvn spring-boot:run
+
+
