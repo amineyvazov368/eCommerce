@@ -11,7 +11,6 @@ Hibernate
 Maven
 Lombok
 ModelMapper
-
 📌 Features
 Product management system
 Category-based filtering (Men, Women, Child, Smart)
@@ -21,7 +20,6 @@ Update product quantity
 Remove products from cart
 Cart management system
 REST API architecture
-
 🧠 Logic
 Products are stored in the database
 Users can browse and search products
@@ -29,7 +27,6 @@ Products can be filtered by category
 Users add products to cart
 Cart manages quantity and items
 System handles basic shopping workflow
-
 🔌 API
 GET /api/products
 GET /api/products/search?name=
@@ -38,10 +35,7 @@ POST /api/cart/add
 PUT /api/cart/update
 DELETE /api/cart/remove
 GET /api/cart
-
 ▶️ Run Project
 git clone https://github.com/amineyvazov368/eCommerce
 cd eCommerce
 mvn spring-boot:run
-
-
