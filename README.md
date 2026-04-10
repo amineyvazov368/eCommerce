@@ -15,27 +15,29 @@ ModelMapper
 
 📌 Features
 
-Product management
-Category filtering (Men, Women, Child, Smart)
+Product management system
+Category-based filtering (Men, Women, Child, Smart)
 Search products by name
 Add products to cart
-Update product quantity in cart
+Update product quantity
 Remove products from cart
-Basic order structure
+Cart management system
+REST API architecture
 
 🧠 Logic
 
-Users browse and search products
+Products are stored in database
+Users can browse and search products
 Products can be filtered by category
 Users add products to cart
-Cart manages quantity and total items
-System handles basic shopping flow
+Cart manages quantity and items
+System handles basic shopping workflow
 
 🔌 API
 
 GET /api/products
 GET /api/products/search?name=
-GET /api/products/category
+GET /api/products/category/{category}
 POST /api/cart/add
 PUT /api/cart/update
 DELETE /api/cart/remove
