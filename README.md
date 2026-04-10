@@ -1,91 +1,47 @@
-🛒 E-Commerce System — Spring Boot Project
-📝 Description
+🛒 E-Commerce API
 
-This project is a full-featured E-Commerce web application built using Spring Boot and modern backend technologies.
-It provides a structured system for managing products, categories, users, and orders.
+Spring Boot REST API for managing products, categories, and shopping cart operations.
 
-🔍 What problem it solves:
-
-For Businesses:
-
-Manage products and categories efficiently
-Handle customer orders and track purchase flow
-Organize shopping cart operations
-
-For Users:
-
-Browse and search products easily
-Add/remove items from cart
-Control product quantities in cart
-Experience a simple and intuitive shopping flow
-
-Technically:
-
-Demonstrates clean Layered Architecture (Controller → Service → Repository)
-Shows best practices in Spring Boot backend development
-Implements scalable and maintainable project structure
-🛠️ Tech Stack
-
-Backend:
+🚀 Tech Stack
 
 Java 17
 Spring Boot
 Spring Data JPA
-Hibernate
-
-Database:
 PostgreSQL
-
-Tools & Libraries:
-
+Hibernate
+Maven
 Lombok
 ModelMapper
 
-Build Tool:
+📌 Features
 
-Maven
+Product management
+Category filtering (Men, Women, Child, Smart)
+Search products by name
+Add products to cart
+Update product quantity in cart
+Remove products from cart
+Basic order structure
 
-⚙️ Setup Instructions
+🧠 Logic
 
-Follow these steps to run the project locally:
+Users browse and search products
+Products can be filtered by category
+Users add products to cart
+Cart manages quantity and total items
+System handles basic shopping flow
 
-1. Clone the repository
-git clone https://github.com/amineyvazov368/eCommerce.git
-2. Configure Database
+🔌 API
 
-Create a PostgreSQL database (example: ecommerce_db)
+GET /api/products
+GET /api/products/search?name=
+GET /api/products/category
+POST /api/cart/add
+PUT /api/cart/update
+DELETE /api/cart/remove
+GET /api/cart
 
-Update your application.properties:
-
-spring.datasource.url=jdbc:postgresql://localhost:5432/ecommerce_db
-spring.datasource.username=postgres
-spring.datasource.password=your_password
-spring.jpa.hibernate.ddl-auto=update
-
-3. Build the project
-mvn clean install
-4. Run the application
+▶️ Run Project
+git clone https://github.com/amineyvazov368/eCommerce
+cd eCommerce
 mvn spring-boot:run
-🚀 Features
-🔍 Product search by name
-🛒 Add to cart functionality
-➕➖ Quantity control in cart
-📂 Filter products by category (Men, Women, Child, Smart)
-📦 Order management system (basic)
-
-
-🔑 API / Usage
-📌 Main Endpoints:
-/products → Get all products
-/products/search?name= → Search product by name
-/cart → View cart
-/cart/add → Add product to cart
-/cart/update → Update quantity
-/cart/remove → Remove product
-
-📌 Future Improvements
-🔐 Authentication & Authorization (Spring Security)
-💳 Payment integration
-📊 Admin dashboard
-⭐ Product reviews & ratings
-📦 Advanced order tracking
