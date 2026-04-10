@@ -1,41 +1,48 @@
-🛒 E-Commerce API
+# 🎓 Student Registration API
 
-Spring Boot REST API for managing products, categories, and shopping cart operations.
+Spring Boot REST API for managing student registration and exam stages.
 
-🚀 Tech Stack
-Java 17
-Spring Boot
-Spring Data JPA
-PostgreSQL
-Hibernate
-Maven
-Lombok
-ModelMapper
-📌 Features
-Product management system
-Category-based filtering (Men, Women, Child, Smart)
-Search products by name
-Add products to cart
-Update product quantity
-Remove products from cart
-Cart management system
-REST API architecture
-🧠 Logic
-Products are stored in the database
-Users can browse and search products
-Products can be filtered by category
-Users add products to cart
-Cart manages quantity and items
-System handles basic shopping workflow
-🔌 API
-GET /api/products
-GET /api/products/search?name=
-GET /api/products/category/{category}
-POST /api/cart/add
-PUT /api/cart/update
-DELETE /api/cart/remove
-GET /api/cart
-▶️ Run Project
-git clone https://github.com/amineyvazov368/eCommerce
-cd eCommerce
+---
+
+## 🚀 Tech Stack
+- Java 21
+- Spring Boot
+- Spring Data JPA
+- PostgreSQL (Aiven)
+- Hibernate
+- Maven
+- Lombok
+- QR Code (ZXing)
+
+---
+
+## 📌 Features
+- Student registration
+- Exam stage management
+- Select students for second stage
+- QR code generation for selected students
+- PostgreSQL cloud database integration
+- REST API architecture
+
+---
+
+## 🧠 Logic
+- Students register for first exam
+- System filters selected candidates (top results)
+- Selected students move to second stage
+- QR code URL generated and saved in DB
+
+---
+
+## 🔌 API
+- POST /api/students
+- GET /api/students
+- POST /api/students/second-stage
+
+---
+
+## ▶️ Run Project
+```bash
+git clone https://github.com/amineyvazov368/student-registration-api
+cd student-registration-api
 mvn spring-boot:run
